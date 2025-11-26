@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario Moderno</title>
+
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px 35px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 420px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #111827;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 6px;
+      margin-bottom: 18px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #6366f1;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="card">
+    <h2>Formulario de Aplicación</h2>
+
+    <form id="formulario">
+      <label>Nombre y Apellidos</label>
+      <input type="text" id="nombre" required>
+
+      <label>Nº de pedido</label>
+      <input type="text" id="pedido" required>
+
+      <label>Ciudad de aplicación</label>
+      <input type="text" id="ciudad" required>
+
+      <label>Tiempo de secado entre capas</label>
+      <input type="text" id="secado" required>
+
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('formulario').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const data = {
+        nombre_apellidos: document.getElementById('nombre').value,
+        numero_pedido: document.getElementById('pedido').value,
+        ciudad_aplicacion: document.getElementById('ciudad').value,
+        tiempo_secado: document.getElementById('secado').value
+      };
+
+      fetch("https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Sf47I0SBWS4A10rbImuKZa4kAvtGlTTHKHr6svEuf5Y", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log("Respuesta del servidor:", result);
+        alert("Formulario enviado correctamente");
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("Error al enviar los datos");
+      });
+
+    });
+  </script>
+
+</body>
+</html>
