@@ -111,15 +111,33 @@
         color: #333;
         padding-left: 5px;
     }
+
+    /* Botón stop/play */
+    #toggleMusicBtn {
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        padding: 6px 12px;
+        font-size: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #6b00ff;
+        color: white;
+        z-index: 99999;
+        opacity: 0.85;
+    }
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 Música relajante -->
+<!-- 🎵 Música desde el repositorio -->
 <audio id="musica" autoplay loop>
-    <source src="https://files.catbox.moe/8z5ny9.mp3" type="audio/mpeg">
+    <source src="please-calm-my-mind-125566.mp3" type="audio/mpeg">
 </audio>
+
+<button id="toggleMusicBtn">❚❚ Stop music</button>
 
 <div class="overlay">
     <div class="container">
@@ -187,7 +205,6 @@
             <label>Otros detalles</label>
             <textarea name="otros"></textarea>
 
-            <!-- SELECT SIN BUSCADOR -->
             <label>Comercial *</label>
             <select name="comercial" id="comercialSelect" required>
                 <option value="">Seleccione un comercial</option>
@@ -235,11 +252,12 @@ document.getElementById("imagenes").addEventListener("change", function () {
     });
 });
 
-/* ---- AUTOPLAY (si el navegador lo bloquea) ---- */
+/* ---- AUTOPLAY + BOTÓN STOP/PLAY ---- */
 window.addEventListener("load", () => {
     const audio = document.getElementById("musica");
-    const playPromise = audio.play();
+    const toggleBtn = document.getElementById("toggleMusicBtn");
 
+    const playPromise = audio.play();
     if (playPromise !== undefined) {
         playPromise.catch(() => {
             audio.muted = true;
@@ -247,6 +265,16 @@ window.addEventListener("load", () => {
             setTimeout(() => audio.muted = false, 1500);
         });
     }
+
+    toggleBtn.addEventListener("click", () => {
+        if (audio.paused) {
+            audio.play();
+            toggleBtn.textContent = "❚❚ Stop music";
+        } else {
+            audio.pause();
+            toggleBtn.textContent = "▶ Play music";
+        }
+    });
 });
 
 /* ---- ENVÍO A POWER AUTOMATE ---- */
@@ -256,7 +284,6 @@ document.getElementById("claimForm").addEventListener("submit", async function (
     const form = e.target;
     const formData = new FormData();
 
-    // Guardar campos normales
     const elements = form.querySelectorAll("input, textarea, select");
     elements.forEach(el => {
         if (el.type !== "file") {
@@ -264,7 +291,6 @@ document.getElementById("claimForm").addEventListener("submit", async function (
         }
     });
 
-    // Guardar imágenes
     const files = Array.from(document.getElementById("imagenes").files).slice(0, 5);
     files.forEach(file => formData.append("imagenes[]", file));
 
