@@ -58,7 +58,7 @@
         color: #222;
     }
 
-    input, textarea {
+    input, textarea, select {
         width: 100%;
         padding: 12px;
         margin-top: 6px;
@@ -69,7 +69,7 @@
         transition: 0.2s;
     }
 
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
         border-color: #7b56ff;
         box-shadow: 0 0 6px rgba(123, 86, 255, 0.4);
         background: white;
@@ -111,10 +111,51 @@
         color: #333;
         padding-left: 5px;
     }
+
+    /* ---- SELECT MODERNO CON BUSCADOR ---- */
+
+    .custom-select-container {
+        position: relative;
+        margin-top: 10px;
+    }
+
+    #comercialSearch {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+        background: #f5f5f5;
+        margin-bottom: 8px;
+        transition: .2s;
+    }
+
+    #comercialSearch:focus {
+        border-color: #7b56ff;
+        box-shadow: 0 0 6px rgba(123, 86, 255, 0.4);
+        background: #fff;
+    }
+
+    #comercialSelect {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        background: #fafafa;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        height: 52px;
+    }
+
 </style>
 </head>
 
 <body>
+
+<!-- 🎵 Música relajante -->
+<audio id="musica" autoplay loop>
+    <source src="https://files.catbox.moe/8z5ny9.mp3" type="audio/mpeg">
+</audio>
+
 <div class="overlay">
     <div class="container">
 
@@ -180,26 +221,32 @@
 
             <label>Otros detalles</label>
             <textarea name="otros"></textarea>
+
+            <!-- SELECT MODERNO -->
             <label>Comercial *</label>
-<select name="comercial" required>
-    <option value="">Seleccione un comercial</option>
-    <option>GISELA MENDEZ</option>
-    <option>KATARZYNA SOKOLOW</option>
-    <option>LUCIA ROMERO</option>
-    <option>MICHAEL DELIVA</option>
-    <option>CESAR ORELLANA</option>
-    <option>RAN LI</option>
-    <option>SERENA COMPAGNONE</option>
-    <option>NATALIA HIGUERAS</option>
-    <option>ALFREDO AZNAR</option>
-    <option>ANTONIO ATIENZAR</option>
-    <option>CHRISTIAN GARCES</option>
-    <option>JAVIER PITARCH</option>
-    <option>JULIAN GOMEZ</option>
-    <option>LEONARDO VALENCIA</option>
-    <option>SERGIO LOZANO</option>
-    <option>ANTONIO CUESTA</option>
-</select>
+            <div class="custom-select-container">
+                <input type="text" id="comercialSearch" placeholder="Buscar comercial..." autocomplete="off">
+
+                <select name="comercial" id="comercialSelect" required>
+                    <option value="">Seleccione un comercial</option>
+                    <option>GISELA MENDEZ</option>
+                    <option>KATARZYNA SOKOLOW</option>
+                    <option>LUCIA ROMERO</option>
+                    <option>MICHAEL DELIVA</option>
+                    <option>CESAR ORELLANA</option>
+                    <option>RAN LI</option>
+                    <option>SERENA COMPAGNONE</option>
+                    <option>NATALIA HIGUERAS</option>
+                    <option>ALFREDO AZNAR</option>
+                    <option>ANTONIO ATIENZAR</option>
+                    <option>CHRISTIAN GARCES</option>
+                    <option>JAVIER PITARCH</option>
+                    <option>JULIAN GOMEZ</option>
+                    <option>LEONARDO VALENCIA</option>
+                    <option>SERGIO LOZANO</option>
+                    <option>ANTONIO CUESTA</option>
+                </select>
+            </div>
 
             <label>Subir archivos (hasta 5 archivos)</label>
             <input type="file" name="imagenes[]" accept="image/*" multiple id="imagenes">
@@ -212,6 +259,21 @@
 </div>
 
 <script>
+/* ---- BUSCADOR DEL SELECT ---- */
+document.getElementById("comercialSearch").addEventListener("keyup", function () {
+    const search = this.value.toUpperCase();
+    const select = document.getElementById("comercialSelect");
+
+    for (let option of select.options) {
+        if (option.text.toUpperCase().includes(search) || option.value === "") {
+            option.style.display = "";
+        } else {
+            option.style.display = "none";
+        }
+    }
+});
+
+/* ---- LISTA DE ARCHIVOS ---- */
 document.getElementById("imagenes").addEventListener("change", function () {
     const list = document.getElementById("fileList");
     list.innerHTML = "";
@@ -225,68 +287,21 @@ document.getElementById("imagenes").addEventListener("change", function () {
     });
 });
 
-document.getElementById("claimForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
+/* ---- AUTOPLAY (forzado si el navegador lo bloquea) ---- */
+window.addEventListener("load", () => {
+    const audio = document.getElementById("musica");
+    const playPromise = audio.play();
 
-    const form = e.target;
-    const formData = new FormData(form);
-
-    // Convertir inputs a JSON
-    const jsonData = {};
-    formData.forEach((value, key) => {
-        if (!key.includes("imagenes")) {
-            jsonData[key] = value;
-        }
-    });
-
-    // Procesar archivos a Base64
-    const files = Array.from(document.getElementById("imagenes").files).slice(0, 5);
-    jsonData.imagenes = [];
-
-    async function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve({
-                nombre: file.name,
-                tipo: file.type,
-                contenido: reader.result.split(",")[1] // solo Base64
-            });
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // si autoplay fue bloqueado, intenta de nuevo silenciosamente
+            audio.muted = true;
+            audio.play();
+            setTimeout(() => audio.muted = false, 1500);
         });
-    }
-
-    for (let file of files) {
-        const base64File = await fileToBase64(file);
-        jsonData.imagenes.push(base64File);
-    }
-
-    console.log("JSON enviado:", jsonData);
-
-    const endpoint = "https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Sf47I0SBWS4A10rbImuKZa4kAvtGlTTHKHr6svEuf5Y";
-
-    try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(jsonData)
-        });
-
-        if (response.ok) {
-            alert("Reclamación enviada con éxito.");
-            form.reset();
-            document.getElementById("fileList").innerHTML = "";
-        } else {
-            alert("Error al enviar. Código: " + response.status);
-        }
-    } catch (error) {
-        alert("Error de conexión: " + error);
     }
 });
 </script>
-
 
 </body>
 </html>
