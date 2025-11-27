@@ -1,199 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reclamaciones</title>
-
-<style>
-    body {
-        margin: 0;
-        font-family: "Segoe UI", Arial, sans-serif;
-        background-image: url('aplicacion-microcemento4-1000x675.jpg');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }
-
-    .overlay {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(4px);
-        min-height: 100vh;
-        padding: 50px 0;
-    }
-
-    .container {
-        width: 90%;
-        max-width: 760px;
-        margin: auto;
-        background: white;
-        padding: 40px 50px;
-        border-radius: 18px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-        animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    h2 {
-        margin-top: 0;
-        font-size: 32px;
-        font-weight: 700;
-        color: #222;
-    }
-
-    p {
-        margin-bottom: 25px;
-        color: #444;
-        line-height: 1.5;
-    }
-
-    label {
-        font-weight: 600;
-        margin-top: 18px;
-        display: block;
-        color: #222;
-    }
-
-    input, textarea {
-        width: 100%;
-        padding: 12px;
-        margin-top: 6px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 15px;
-        background: #fafafa;
-        transition: 0.2s;
-    }
-
-    input:focus, textarea:focus {
-        border-color: #7b56ff;
-        box-shadow: 0 0 6px rgba(123, 86, 255, 0.4);
-        background: white;
-        outline: none;
-    }
-
-    textarea {
-        height: 110px;
-    }
-
-    .radio-group {
-        display: flex;
-        gap: 35px;
-        margin-top: 8px;
-    }
-
-    button {
-        margin-top: 35px;
-        width: 100%;
-        padding: 15px;
-        border: none;
-        background: linear-gradient(45deg, #6b00ff, #9b6bff);
-        color: white;
-        font-size: 18px;
-        font-weight: bold;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: 0.25s;
-    }
-
-    button:hover {
-        transform: scale(1.03);
-        opacity: 0.92;
-    }
-
-    #fileList {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #333;
-        padding-left: 5px;
-    }
-</style>
-</head>
-
-<body>
-<div class="overlay">
-    <div class="container">
-
-        <h2>Reclamaciones</h2>
-        <p>Por favor proporcione toda la información necesaria para analizar correctamente su caso.</p>
-
-        <form id="claimForm" enctype="multipart/form-data">
-
-            <label>Nombre y Apellidos</label>
-            <input type="text" name="nombre" required>
-
-            <label>Referencia Pedido</label>
-            <input type="text" name="referencia_pedido" required>
-
-            <label>Fecha y hora de aplicación *</label>
-            <input type="datetime-local" name="fecha_hora" required>
-
-            <label>Ciudad de aplicación *</label>
-            <input type="text" name="ciudad" required>
-
-            <label>Habitación ventilada *</label>
-            <div class="radio-group">
-                <label><input type="radio" name="ventilada" value="Sí" required> Sí</label>
-                <label><input type="radio" name="ventilada" value="No" required> No</label>
-            </div>
-
-            <label>Pasos realizados</label>
-            <textarea name="pasos"></textarea>
-
-            <label>Uso de mallas *</label>
-            <div class="radio-group">
-                <label><input type="radio" name="mallas" value="Sí" required> Sí</label>
-                <label><input type="radio" name="mallas" value="No" required> No</label>
-            </div>
-
-            <label>Soporte de aplicación</label>
-            <input type="text" name="soporte">
-
-            <label>Tiempo con el envase/producto abierto</label>
-            <input type="text" name="tiempo_abierto">
-
-            <label>Número capas aplicadas</label>
-            <input type="number" name="num_capas">
-
-            <label>Relación de mezcla</label>
-            <input type="text" name="relacion_mezcla">
-
-            <label>Tipo de habitación</label>
-            <input type="text" name="tipo_habitacion">
-
-            <label>Temperatura (°C) aplicación</label>
-            <input type="number" name="temperatura">
-
-            <label>Localización aplicación *</label>
-            <div class="radio-group">
-                <label><input type="radio" name="localizacion" value="Planta Baja" required> Planta Baja</label>
-                <label><input type="radio" name="localizacion" value="Primer Piso" required> Primer Piso</label>
-                <label><input type="radio" name="localizacion" value="Segundo Piso" required> Segundo Piso</label>
-                <label><input type="radio" name="localizacion" value="Piso Alto" required> Piso Alto</label>
-                <label><input type="radio" name="localizacion" value="Subsuelo" required> Subsuelo</label>
-                <label><input type="radio" name="localizacion" value="Otras" required> Otras</label>
-            </div>
-
-            <label>Otros detalles</label>
-            <textarea name="otros"></textarea>
-
-            <label>Comercial *</label>
-            <input type="text" name="comercial" required>
-
-            <label>Subir archivos (hasta 5 archivos)</label>
-            <input type="file" name="imagenes[]" accept="image/*" multiple id="imagenes">
-            <div id="fileList"></div>
-
-            <button type="submit">Enviar</button>
-        </form>
-
-    </div>
-</div>
-
 <script>
 document.getElementById("imagenes").addEventListener("change", function () {
     const list = document.getElementById("fileList");
@@ -211,19 +15,55 @@ document.getElementById("imagenes").addEventListener("change", function () {
 document.getElementById("claimForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const formData = new FormData(e.target); // ENVÍA textos + archivos
+    const form = e.target;
+    const formData = new FormData(form);
+
+    // Convertir inputs a JSON
+    const jsonData = {};
+    formData.forEach((value, key) => {
+        if (!key.includes("imagenes")) {
+            jsonData[key] = value;
+        }
+    });
+
+    // Procesar archivos a Base64
+    const files = Array.from(document.getElementById("imagenes").files).slice(0, 5);
+    jsonData.imagenes = [];
+
+    async function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve({
+                nombre: file.name,
+                tipo: file.type,
+                contenido: reader.result.split(",")[1] // solo Base64
+            });
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    for (let file of files) {
+        const base64File = await fileToBase64(file);
+        jsonData.imagenes.push(base64File);
+    }
+
+    console.log("JSON enviado:", jsonData);
 
     const endpoint = "https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Sf47I0SBWS4A10rbImuKZa4kAvtGlTTHKHr6svEuf5Y";
 
     try {
         const response = await fetch(endpoint, {
             method: "POST",
-            body: formData
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jsonData)
         });
 
         if (response.ok) {
             alert("Reclamación enviada con éxito.");
-            e.target.reset();
+            form.reset();
             document.getElementById("fileList").innerHTML = "";
         } else {
             alert("Error al enviar. Código: " + response.status);
@@ -233,6 +73,3 @@ document.getElementById("claimForm").addEventListener("submit", async function (
     }
 });
 </script>
-
-</body>
-</html>
