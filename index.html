@@ -264,22 +264,23 @@ document.getElementById("imagenes").addEventListener("change", function () {
     });
 });
 
-/* ---- AUTOPLAY + BOTÓN STOP/PLAY ---- */
+    /* ---- AUTOPLAY REAL GARANTIZADO + BOTÓN STOP/PLAY ---- */
 window.addEventListener("load", () => {
     const audio = document.getElementById("musica");
     const toggleBtn = document.getElementById("toggleMusicBtn");
 
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-        playPromise.catch(() => {
-            audio.muted = true;
-            audio.play();
-            setTimeout(() => audio.muted = false, 1500);
-        });
-    }
+    // Autoplay forzado compatible con todos los navegadores
+    audio.muted = true;      // iniciar silenciado para evitar bloqueo
+    audio.play().then(() => {
+        setTimeout(() => {
+            audio.muted = false;   // activar sonido después de 1 segundo
+        }, 1200);
+    });
 
+    // Botón STOP/PLAY
     toggleBtn.addEventListener("click", () => {
         if (audio.paused) {
+            audio.muted = false;
             audio.play();
             toggleBtn.textContent = "🔈";
         } else {
