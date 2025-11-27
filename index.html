@@ -213,7 +213,7 @@ document.getElementById("claimForm").addEventListener("submit", async function (
 
     const formData = new FormData(e.target); // ENVÍA textos + archivos
 
-    const endpoint = "https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1";
+    const endpoint = "https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Sf47I0SBWS4A10rbImuKZa4kAvtGlTTHKHr6svEuf5Y";
 
     try {
         const response = await fetch(endpoint, {
