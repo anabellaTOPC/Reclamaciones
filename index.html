@@ -15,7 +15,6 @@
         background-attachment: fixed;
     }
 
-    /* Capa translúcida para mejorar legibilidad */
     .overlay {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(4px);
@@ -87,10 +86,6 @@
         margin-top: 8px;
     }
 
-    .radio-group label {
-        font-weight: normal;
-    }
-
     button {
         margin-top: 35px;
         width: 100%;
@@ -109,6 +104,13 @@
         transform: scale(1.03);
         opacity: 0.92;
     }
+
+    #fileList {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #333;
+        padding-left: 5px;
+    }
 </style>
 </head>
 
@@ -119,12 +121,12 @@
         <h2>Reclamaciones</h2>
         <p>Por favor proporcione toda la información necesaria para analizar correctamente su caso.</p>
 
-        <form id="claimForm">
+        <form id="claimForm" enctype="multipart/form-data">
 
-            <label>Nombre y Apellidos </label>
+            <label>Nombre y Apellidos</label>
             <input type="text" name="nombre" required>
 
-            <label>Referencia Pedido </label>
+            <label>Referencia Pedido</label>
             <input type="text" name="referencia_pedido" required>
 
             <label>Fecha y hora de aplicación *</label>
@@ -182,6 +184,10 @@
             <label>Comercial *</label>
             <input type="text" name="comercial" required>
 
+            <label>Subir imágenes (hasta 5 archivos)</label>
+            <input type="file" name="imagenes[]" accept="image/*" multiple id="imagenes">
+            <div id="fileList"></div>
+
             <button type="submit">Enviar</button>
         </form>
 
@@ -189,26 +195,36 @@
 </div>
 
 <script>
+document.getElementById("imagenes").addEventListener("change", function () {
+    const list = document.getElementById("fileList");
+    list.innerHTML = "";
+
+    const files = Array.from(this.files).slice(0, 5);
+
+    files.forEach(file => {
+        const item = document.createElement("div");
+        item.textContent = "• " + file.name;
+        list.appendChild(item);
+    });
+});
+
 document.getElementById("claimForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
-    const jsonData = {};
-
-    formData.forEach((value, key) => jsonData[key] = value);
+    const formData = new FormData(e.target); // ENVÍA textos + archivos
 
     const endpoint = "https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Sf47I0SBWS4A10rbImuKZa4kAvtGlTTHKHr6svEuf5Y";
 
     try {
         const response = await fetch(endpoint, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(jsonData)
+            body: formData
         });
 
         if (response.ok) {
             alert("Reclamación enviada con éxito.");
             e.target.reset();
+            document.getElementById("fileList").innerHTML = "";
         } else {
             alert("Error al enviar. Código: " + response.status);
         }
