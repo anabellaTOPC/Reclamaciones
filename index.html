@@ -292,28 +292,68 @@ window.addEventListener("load", () => {
 });
 
 /* ---- ENVÍO A POWER AUTOMATE ---- */
+<script>
+/* ---- LISTA DE ARCHIVOS ---- */
+document.getElementById("imagenes").addEventListener("change", function () {
+    const list = document.getElementById("fileList");
+    list.innerHTML = "";
+
+    const files = Array.from(this.files).slice(0, 5);
+
+    files.forEach(file => {
+        const item = document.createElement("div");
+        item.textContent = "• " + file.name;
+        list.appendChild(item);
+    });
+});
+
+/* ---- CONVERTIR ARCHIVO A BASE64 ---- */
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(",")[1]); // quitar encabezado
+        reader.onerror = reject;
+    });
+}
+
+/* ---- ENVÍO A POWER AUTOMATE COMO JSON ---- */
 document.getElementById("claimForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const form = e.target;
-    const formData = new FormData();
+    const datos = {};
 
+    // Capturar todos los campos (excepto archivos)
     const elements = form.querySelectorAll("input, textarea, select");
     elements.forEach(el => {
         if (el.type !== "file") {
-            formData.append(el.name, el.value);
+            datos[el.name] = el.value;
         }
     });
 
+    // Procesar archivos a Base64
     const files = Array.from(document.getElementById("imagenes").files).slice(0, 5);
-    files.forEach(file => formData.append("imagenes[]", file));
+    datos["imagenes"] = [];
+
+    for (const file of files) {
+        const base64 = await fileToBase64(file);
+        datos["imagenes"].push({
+            nombre: file.name,
+            tipo: file.type,
+            contenido: base64
+        });
+    }
 
     const endpoint = "https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Sf47I0SBWS4A10rbImuKZa4kAvtGlTTHKHr6svEuf5Y";
 
     try {
         const response = await fetch(endpoint, {
             method: "POST",
-            body: formData
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(datos)
         });
 
         if (response.ok) {
