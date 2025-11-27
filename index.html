@@ -38,25 +38,9 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    h2 {
-        margin-top: 0;
-        font-size: 32px;
-        font-weight: 700;
-        color: #222;
-    }
-
-    p {
-        margin-bottom: 25px;
-        color: #444;
-        line-height: 1.5;
-    }
-
-    label {
-        font-weight: 600;
-        margin-top: 18px;
-        display: block;
-        color: #222;
-    }
+    h2 { margin-top: 0; font-size: 32px; font-weight: 700; color: #222; }
+    p { margin-bottom: 25px; color: #444; line-height: 1.5; }
+    label { font-weight: 600; margin-top: 18px; display: block; color: #222; }
 
     input, textarea, select {
         width: 100%;
@@ -76,17 +60,10 @@
         outline: none;
     }
 
-    textarea {
-        height: 110px;
-    }
+    textarea { height: 110px; }
 
-    .radio-group {
-        display: flex;
-        gap: 35px;
-        margin-top: 8px;
-    }
+    .radio-group { display: flex; gap: 35px; margin-top: 8px; }
 
-    /* BOTÓN ENVIAR — ahora blanco con borde negro */
     button[type="submit"] {
         margin-top: 35px;
         width: 100%;
@@ -113,7 +90,6 @@
         padding-left: 5px;
     }
 
-    /* Botón stop/play minimalista */
     #toggleMusicBtn {
         position: fixed;
         top: 15px;
@@ -139,12 +115,18 @@
         transform: scale(1.05);
     }
 
+    /* Mensaje de estado */
+    #statusMsg {
+        margin-top: 20px;
+        font-weight: bold;
+        text-align: center;
+        font-size: 17px;
+    }
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 Música desde el repositorio -->
 <audio id="musica" autoplay loop>
     <source src="please-calm-my-mind-125566.mp3" type="audio/mpeg">
 </audio>
@@ -245,17 +227,18 @@
             <div id="fileList"></div>
 
             <button type="submit">Enviar</button>
+
+            <div id="statusMsg"></div>
         </form>
 
     </div>
 </div>
 
 <script>
-/* ---- LISTA DE ARCHIVOS ---- */
+/* ---- MOSTRAR ARCHIVOS ---- */
 document.getElementById("imagenes").addEventListener("change", function () {
     const list = document.getElementById("fileList");
     list.innerHTML = "";
-
     const files = Array.from(this.files).slice(0, 5);
 
     files.forEach(file => {
@@ -265,20 +248,16 @@ document.getElementById("imagenes").addEventListener("change", function () {
     });
 });
 
-    /* ---- AUTOPLAY REAL GARANTIZADO + BOTÓN STOP/PLAY ---- */
+/* ---- AUDIO ---- */
 window.addEventListener("load", () => {
     const audio = document.getElementById("musica");
     const toggleBtn = document.getElementById("toggleMusicBtn");
 
-    // Autoplay forzado compatible con todos los navegadores
-    audio.muted = true;      // iniciar silenciado para evitar bloqueo
+    audio.muted = true;
     audio.play().then(() => {
-        setTimeout(() => {
-            audio.muted = false;   // activar sonido después de 1 segundo
-        }, 1200);
+        setTimeout(() => { audio.muted = false; }, 1200);
     });
 
-    // Botón STOP/PLAY
     toggleBtn.addEventListener("click", () => {
         if (audio.paused) {
             audio.muted = false;
@@ -291,40 +270,27 @@ window.addEventListener("load", () => {
     });
 });
 
-/* ---- ENVÍO A POWER AUTOMATE ---- */
-<script>
-/* ---- LISTA DE ARCHIVOS ---- */
-document.getElementById("imagenes").addEventListener("change", function () {
-    const list = document.getElementById("fileList");
-    list.innerHTML = "";
-
-    const files = Array.from(this.files).slice(0, 5);
-
-    files.forEach(file => {
-        const item = document.createElement("div");
-        item.textContent = "• " + file.name;
-        list.appendChild(item);
-    });
-});
-
-/* ---- CONVERTIR ARCHIVO A BASE64 ---- */
+/* ---- BASE64 ---- */
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(",")[1]); // quitar encabezado
+        reader.onload = () => resolve(reader.result.split(",")[1]);
         reader.onerror = reject;
     });
 }
 
-/* ---- ENVÍO A POWER AUTOMATE COMO JSON ---- */
+/* ---- ENVIAR FORMULARIO JSON ---- */
 document.getElementById("claimForm").addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    const status = document.getElementById("statusMsg");
+    status.style.color = "#333";
+    status.textContent = "Enviando...";
 
     const form = e.target;
     const datos = {};
 
-    // Capturar todos los campos (excepto archivos)
     const elements = form.querySelectorAll("input, textarea, select");
     elements.forEach(el => {
         if (el.type !== "file") {
@@ -332,17 +298,12 @@ document.getElementById("claimForm").addEventListener("submit", async function (
         }
     });
 
-    // Procesar archivos a Base64
     const files = Array.from(document.getElementById("imagenes").files).slice(0, 5);
     datos["imagenes"] = [];
 
     for (const file of files) {
         const base64 = await fileToBase64(file);
-        datos["imagenes"].push({
-            nombre: file.name,
-            tipo: file.type,
-            contenido: base64
-        });
+        datos["imagenes"].push({ nombre: file.name, tipo: file.type, contenido: base64 });
     }
 
     const endpoint = "https://aff94820bd7ae1c68adacb1a608c7d.5c.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/491ec07957c5495aa97185d178dd43a4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Sf47I0SBWS4A10rbImuKZa4kAvtGlTTHKHr6svEuf5Y";
@@ -350,21 +311,22 @@ document.getElementById("claimForm").addEventListener("submit", async function (
     try {
         const response = await fetch(endpoint, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(datos)
         });
 
         if (response.ok) {
-            alert("Reclamación enviada con éxito.");
+            status.style.color = "green";
+            status.textContent = "¡Reclamación enviada con éxito!";
             form.reset();
             document.getElementById("fileList").innerHTML = "";
         } else {
-            alert("Error al enviar. Código: " + response.status);
+            status.style.color = "red";
+            status.textContent = "Error al enviar. Código: " + response.status;
         }
     } catch (error) {
-        alert("Error de conexión: " + error);
+        status.style.color = "red";
+        status.textContent = "Error de conexión: " + error;
     }
 });
 </script>
