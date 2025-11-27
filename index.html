@@ -264,23 +264,36 @@ document.getElementById("imagenes").addEventListener("change", function () {
     });
 });
 
-    /* ---- AUTOPLAY REAL GARANTIZADO + BOTÓN STOP/PLAY ---- */
-window.addEventListener("load", () => {
+/* AUTOPLAY REAL GARANTIZADO EN CHROME, EDGE, FIREFOX */
+window.addEventListener("load", async () => {
     const audio = document.getElementById("musica");
     const toggleBtn = document.getElementById("toggleMusicBtn");
 
-    // Autoplay forzado compatible con todos los navegadores
-    audio.muted = true;      // iniciar silenciado para evitar bloqueo
-    audio.play().then(() => {
-        setTimeout(() => {
-            audio.muted = false;   // activar sonido después de 1 segundo
-        }, 1200);
+    // 1. Crear contexto de audio (desbloquea autoplay)
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+
+    // 2. Hacer un "beep" inaudible para habilitar reproducción automática
+    const oscillator = ctx.createOscillator();
+    oscillator.frequency.value = 0; // silencio
+    oscillator.connect(ctx.destination);
+    oscillator.start(0);
+    oscillator.stop(0);
+
+    // 3. Esperar a que Chrome habilite reproducción
+    await ctx.resume();
+
+    // 4. Reproducir tu música
+    audio.volume = 1;
+    audio.muted = false;
+    audio.play().catch(err => {
+        console.warn("Autoplay bloqueado, se intentará nuevamente...");
+        setTimeout(() => audio.play(), 800);
     });
 
-    // Botón STOP/PLAY
+    // BOTÓN STOP/PLAY
     toggleBtn.addEventListener("click", () => {
         if (audio.paused) {
-            audio.muted = false;
             audio.play();
             toggleBtn.textContent = "🔈";
         } else {
@@ -289,6 +302,7 @@ window.addEventListener("load", () => {
         }
     });
 });
+
 
 /* ---- ENVÍO A POWER AUTOMATE ---- */
 document.getElementById("claimForm").addEventListener("submit", async function (e) {
