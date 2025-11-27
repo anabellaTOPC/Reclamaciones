@@ -113,47 +113,6 @@
         padding-left: 5px;
     }
 
-    /* Botón stop/play minimalista */
-    #toggleMusicBtn {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
-        border: 1px solid #000;
-        background: #ffffff;
-        color: #000;
-        cursor: pointer;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        transition: 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    }
-
-    #toggleMusicBtn:hover {
-        background: #f4f4f4;
-        transform: scale(1.05);
-    }
-
-</style>
-</head>
-
-<body>
-
-<!-- 🎵 Música desde el repositorio -->
-<audio id="musica" autoplay loop>
-    <source src="please-calm-my-mind-125566.mp3" type="audio/mpeg">
-</audio>
-
-<button id="toggleMusicBtn">🔈</button>
-
-<div class="overlay">
-    <div class="container">
-
         <h2>Reclamaciones</h2>
         <p>Por favor proporcione toda la información necesaria para analizar correctamente su caso.</p>
 
@@ -263,46 +222,6 @@ document.getElementById("imagenes").addEventListener("change", function () {
         list.appendChild(item);
     });
 });
-
-/* AUTOPLAY REAL GARANTIZADO EN CHROME, EDGE, FIREFOX */
-window.addEventListener("load", async () => {
-    const audio = document.getElementById("musica");
-    const toggleBtn = document.getElementById("toggleMusicBtn");
-
-    // 1. Crear contexto de audio (desbloquea autoplay)
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const ctx = new AudioCtx();
-
-    // 2. Hacer un "beep" inaudible para habilitar reproducción automática
-    const oscillator = ctx.createOscillator();
-    oscillator.frequency.value = 0; // silencio
-    oscillator.connect(ctx.destination);
-    oscillator.start(0);
-    oscillator.stop(0);
-
-    // 3. Esperar a que Chrome habilite reproducción
-    await ctx.resume();
-
-    // 4. Reproducir tu música
-    audio.volume = 1;
-    audio.muted = false;
-    audio.play().catch(err => {
-        console.warn("Autoplay bloqueado, se intentará nuevamente...");
-        setTimeout(() => audio.play(), 800);
-    });
-
-    // BOTÓN STOP/PLAY
-    toggleBtn.addEventListener("click", () => {
-        if (audio.paused) {
-            audio.play();
-            toggleBtn.textContent = "🔈";
-        } else {
-            audio.pause();
-            toggleBtn.textContent = "🔇";
-        }
-    });
-});
-
 
 /* ---- ENVÍO A POWER AUTOMATE ---- */
 document.getElementById("claimForm").addEventListener("submit", async function (e) {
