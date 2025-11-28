@@ -42,18 +42,8 @@
     p { margin-bottom: 25px; color: #444; line-height: 1.5; }
     label { font-weight: 600; margin-top: 18px; display: block; color: #222; }
 
-    textarea, select {
+    textarea, select, input {
         width: 90%;
-        padding: 12px;
-        margin-top: 6px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 15px;
-        background: #fafafa;
-        transition: 0.2s;
-    }
-    input {
-        width: auto;
         padding: 12px;
         margin-top: 6px;
         border: 1px solid #ccc;
@@ -200,8 +190,8 @@
 
             <label>Habitación ventilada *</label>
             <div class="radio-group">
-                <label><input type="radio" name="ventilada" value="Sí" required> Sí</label>
-                <label><input type="radio" name="ventilada" value="No" required> No</label>
+                <label><input style="width: auto;" type="radio" name="ventilada" value="Sí" required> Sí</label>
+                <label><input style="width: auto;" type="radio" name="ventilada" value="No" required> No</label>
             </div>
 
             <label>Pasos realizados</label>
@@ -209,8 +199,8 @@
 
             <label>Uso de mallas *</label>
             <div class="radio-group">
-                <label><input type="radio" name="mallas" value="Sí" required> Sí</label>
-                <label><input type="radio" name="mallas" value="No" required> No</label>
+                <label><input type="radio" style="width: auto;" name="mallas" value="Sí" required> Sí</label>
+                <label><input type="radio" style="width: auto;" name="mallas" value="No" required> No</label>
             </div>
 
             <label>Soporte de aplicación</label>
@@ -233,12 +223,12 @@
 
             <label>Localización aplicación *</label>
             <div class="radio-group">
-                <label><input type="radio" name="localizacion" value="Planta Baja" required> Planta Baja</label>
-                <label><input type="radio" name="localizacion" value="Primer Piso" required> Primer Piso</label>
-                <label><input type="radio" name="localizacion" value="Segundo Piso" required> Segundo Piso</label>
-                <label><input type="radio" name="localizacion" value="Piso Alto" required> Piso Alto</label>
-                <label><input type="radio" name="localizacion" value="Subsuelo" required> Subsuelo</label>
-                <label><input type="radio" name="localizacion" value="Otras" required> Otras</label>
+                <label><input type="radio" style="width: auto;" name="localizacion" value="Planta Baja" required> Planta Baja</label>
+                <label><input type="radio" style="width: auto;" name="localizacion" value="Primer Piso" required> Primer Piso</label>
+                <label><input type="radio" style="width: auto;" name="localizacion" value="Segundo Piso" required> Segundo Piso</label>
+                <label><input type="radio" style="width: auto;" name="localizacion" value="Piso Alto" required> Piso Alto</label>
+                <label><input type="radio" style="width: auto;" name="localizacion" value="Subsuelo" required> Subsuelo</label>
+                <label><input type="radio" style="width: auto;" name="localizacion" value="Otras" required> Otras</label>
             </div>
 
             <label>Otros detalles</label>
