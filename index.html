@@ -62,7 +62,16 @@
 
     textarea { height: 110px; }
 
-    .radio-group { display: flex; gap: 35px; margin-top: 8px; }
+    .radio-group {
+        display: flex;
+        gap: 35px;
+        margin-top: 8px;
+        flex-wrap: wrap; /* ← AÑADIDO */
+    }
+
+    .radio-group label {
+        flex: 1 1 45%; /* ← AÑADIDO para que los radios hagan wrap correctamente */
+    }
 
     button[type="submit"] {
         margin-top: 35px;
@@ -115,7 +124,6 @@
         transform: scale(1.05);
     }
 
-    /* Mensaje de estado */
     #statusMsg {
         margin-top: 20px;
         font-weight: bold;
@@ -235,7 +243,6 @@
 </div>
 
 <script>
-/* ---- MOSTRAR ARCHIVOS ---- */
 document.getElementById("imagenes").addEventListener("change", function () {
     const list = document.getElementById("fileList");
     list.innerHTML = "";
@@ -248,7 +255,6 @@ document.getElementById("imagenes").addEventListener("change", function () {
     });
 });
 
-/* ---- AUDIO ---- */
 window.addEventListener("load", () => {
     const audio = document.getElementById("musica");
     const toggleBtn = document.getElementById("toggleMusicBtn");
@@ -270,7 +276,6 @@ window.addEventListener("load", () => {
     });
 });
 
-/* ---- BASE64 ---- */
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -280,7 +285,6 @@ function fileToBase64(file) {
     });
 }
 
-/* ---- ENVIAR FORMULARIO JSON ---- */
 document.getElementById("claimForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
